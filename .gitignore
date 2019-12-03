@@ -1,4 +1,10 @@
 Resque
+Dataset
+Annotate
+Log
+Outputs
+__pycache__
 *~
 *.png
 *.jpg
+log*
