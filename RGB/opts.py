@@ -5,9 +5,14 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--model', '-m',
-        default='vgg16',
+        default='resnet',
         type=str,
         help='[ vgg16 | resnet ]')
+    parser.add_argument(
+        '--fps', '-f',
+        default=6,
+        type=int,
+        help='1 to 30')
     parser.add_argument(
         '--jpg_path', '-j',
         default='./Dataset',

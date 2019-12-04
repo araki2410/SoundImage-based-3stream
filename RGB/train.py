@@ -35,7 +35,7 @@ data_dir = opt.jpg_path
 optim = opt.optimizer
 result_path = opt.result_path
 start_time = opt.start_time
-frame_rate=30
+frame_rate=opt.fps
 gpu = opt.gpu
 ## Our video have variety. 森とかビルとか環境が多様なので
 ## So, we need extract  beforehand, "learning part" and "evaluation part" from each video. 事前に学習用と評価用の画像を決定しておく
@@ -66,9 +66,9 @@ transform_test = transforms.Compose(
     ])
 
 
-texts = "\n{}epoch, {}batch, {}num_works, lr={}, threthold={}, optimizer={}, gpu={}\n"
+texts = "\nepoch={}, batch_size={}, num_works={}, lr={}, threthold={}, optimizer={}, gpu={}\n"
 print("\nLog/"+corename)
-print(texts.format(epochs, batch_size, works, learning_rate, threthold, optim, gpu),  opt.annotation_file, "\n")
+print(texts.format(epochs, batch_size, works, learning_rate, threthold, optim, gpu),  "Annotation file: ", opt.annotation_file, "\n")
 
 
 
@@ -103,8 +103,8 @@ model = model.to(device)
 
 ## Load dataset.
 #train_dataset = dataload.MulchVideoset(annotation_train, data_dir, classes, transform_train)
-train_dataset = dataload.RGBStream(annotation_train, data_dir, classes, transform_train)
-test_dataset  = dataload.RGBStream(annotation_test,  data_dir, classes, transform_test)
+train_dataset = dataload.RGBStream(annotation_train, data_dir, classes, transform_train, fps=frame_rate)
+test_dataset  = dataload.RGBStream(annotation_test,  data_dir, classes, transform_test, fps=frame_rate)
 
 #train_size = int(0.8 * len(dataset))
 #test_size = len(dataset)-train_size  

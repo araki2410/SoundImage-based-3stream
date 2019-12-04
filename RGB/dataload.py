@@ -7,10 +7,11 @@ import librosa
 
 
 class RGBStream(torch.utils.data.Dataset):
-    def __init__(self, annotation_file, data_dir, classes, transform=None, n=1):
+    def __init__(self, annotation_file, data_dir, classes, transform=None, fps=6):
         ##
         ## For load 1/n frame
         ##
+        n = int(30/6)
         self.image_dataframe = []
         self.transform = transform
         
