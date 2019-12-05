@@ -42,10 +42,20 @@ gpu = opt.gpu
 annotation_test = opt.annotation_file+"_test.txt"
 annotation_train = opt.annotation_file+"_train.txt"
 
+def e_is(lr):
+    ## Count 0; in 0.00002 out 2e-5
+    lr = float(lr)
+    i = 0
+    while lr < 1:
+        lr *= 10
+        i += 1
+    return("{}e-{}".format(int(lr), i))
+    
+
 if swing_rate != 1.0:
     addtext = "_sr-{}_sp-{}".format(int(swing_rate*10), swing_period)
 #corename = opt.save_name+"_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+str(str(int(learning_rate**(-1))).count("0"))+addtext
-corename = model_name+"_"+stream+"_"+optim+"_"+str(frame_rate)+"fps_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+str(str(int(learning_rate**(-1))).count("0"))+"_"+start_time
+corename = model_name+"_"+stream+"_"+optim+"_"+str(frame_rate)+"fps_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+e_is(learning_rate)+"_"+start_time
 
 transform_train = transforms.Compose(
     [transforms.Resize((256, 256)),
