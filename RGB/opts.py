@@ -14,38 +14,31 @@ def parse_opts():
         type=int,
         help='1 to 30')
     parser.add_argument(
-        '--jpg_path', '-j',
-        default='./Dataset',
-        type=str,
-        help='Directory path of Datas')
-    parser.add_argument(
         '--annotation_file', '-a',
         default='./Annotate/73',
         #default='Annotation/seven80_6fps',
         type=str,
         help='Annotation file path')
     parser.add_argument(
-        '--result_path',
-        default='./Outputs',
-        type=str,
-        help='Result directory path')
+        '--multi_gpu', 
+        help='If true use mulch GPU.') 
     parser.add_argument(
-        '--image_path',
-        default='./Outputs',
+        '--optimizer', '-o',
+        default="adam",
         type=str,
-        help='output image path')
+        help='[ adam | sgd ]')
     parser.add_argument(
         '--lr',
         default=0.000001,
         type=float,
         help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
-        '--swing_rate',
+        '--step_rate',
         default=1.0,
         type=float,
         help='learning rate * down_rate. default=1.0 (no swing)')
     parser.add_argument(
-        '--swing_period',
+        '--step_period',
         default=1000,
         type=int,
         help='piriod of down learning_rate. default=100')
@@ -69,13 +62,20 @@ def parse_opts():
         type=str,
         help='Core name to save for: image, logs and other outputs')
     parser.add_argument(
-        '--multi_gpu', 
-        help='If true use mulch GPU.') 
-    parser.add_argument(
-        '--optimizer', '-o',
-        default="adam",
+        '--jpg_path', '-j',
+        default='./Dataset',
         type=str,
-        help='[ adam | sgd ]')
+        help='Directory path of Datas')
+    parser.add_argument(
+        '--result_path',
+        default='./Outputs',
+        type=str,
+        help='Result directory path')
+    parser.add_argument(
+        '--image_path',
+        default='./Outputs',
+        type=str,
+        help='output image path')
     parser.add_argument(
         '--oldloss',
         default=2,

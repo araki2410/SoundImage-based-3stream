@@ -18,7 +18,6 @@ import dataload
 #import networks
 from opts import parse_opts
 
-
 opt = parse_opts()
 
 model_name = opt.model
@@ -26,8 +25,8 @@ epochs = opt.epochs
 batch_size = opt.batch_size 
 works = opt.num_works
 learning_rate = opt.lr
-swing_rate = opt.swing_rate
-swing_period = opt.swing_period
+step_rate = opt.step_rate
+step_period = opt.step_period
 stream = opt.stream
 threthold = opt.threthold
 IMAGE_PATH = opt.image_path
@@ -52,10 +51,10 @@ def e_is(lr):
     return("{}e-{}".format(int(lr), i))
     
 
-if swing_rate != 1.0:
-    addtext = "_sr-{}_sp-{}".format(int(swing_rate*10), swing_period)
+if step_rate != 1.0:
+    addtext = "_sr-{}_sp-{}".format(int(step_rate*10), step_period)
 #corename = opt.save_name+"_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+str(str(int(learning_rate**(-1))).count("0"))+addtext
-corename = model_name+"_"+stream+"_"+optim+"_"+str(frame_rate)+"fps_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+e_is(learning_rate)+"_"+start_time
+corename = model_name+"_"+stream+"_"+optim+"_"+opt.annotation_file.split("/")[-1]+str(frame_rate)+"_fps"+"_bs-"+str(batch_size)+"_lr-"+e_is(learning_rate)+"_"+start_time
 
 transform_train = transforms.Compose(
     [transforms.Resize((256, 256)),
@@ -234,7 +233,10 @@ if optim == "sgd":
 else:
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=swing_period, gamma=swing_rate)
+
+
+
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_period, gamma=step_rate)
 
 for epoch in range(epochs):
     scheduler.step()
@@ -297,16 +299,7 @@ plt.figure()
 x = []
 for i in range(0, len(loss_list)):
     x.append(i)
-#x = np.array(x)
-#plt.plot(x, np.array(loss_list), label="train")
-#plt.plot(x, np.array(val_loss_list), label="test")
-#plt.plot(x, np.array(val_acc_list), label="acc")
-#plt.legend() # 凡例
-#plt.xlabel("epoch")
-#plt.ylabel("score")
-#plt.savefig('./Img/figurefinetuneopt.png')
-#print("save to ./Img/figurefinetuneopt.png")
-#plt.savefig(os.path.join(IMAGE_PATH,corename+'.png'))
+
 print("save to "+corename+".png")
 
 ### Save a model.
@@ -317,5 +310,4 @@ print("save to "+corename+".png")
 exit()
 
 classes = ['bark','cling','comand','eat','handlr','run','victim','shake','sniff','stop','walk']
-#draw_heatmap(arra, classes, classes)
 
