@@ -54,7 +54,7 @@ def e_is(lr):
 if step_rate != 1.0:
     addtext = "_sr-{}_sp-{}".format(int(step_rate*10), step_period)
 #corename = opt.save_name+"_"+opt.annotation_file.split("/")[-1]+"_bc-"+str(batch_size)+"_lr-"+str(str(int(learning_rate**(-1))).count("0"))+addtext
-corename = model_name+"_"+stream+"_"+optim+"_"+opt.annotation_file.split("/")[-1]+str(frame_rate)+"_fps"+"_bs-"+str(batch_size)+"_lr-"+e_is(learning_rate)+"_"+start_time
+corename = model_name+"_"+stream+"_"+optim+"_"+opt.annotation_file.split("/")[-1]+"_"+str(frame_rate)+"fps"+"_bs-"+str(batch_size)+"_lr-"+e_is(learning_rate)+"_"+start_time
 
 transform_train = transforms.Compose(
     [transforms.Resize((256, 256)),
