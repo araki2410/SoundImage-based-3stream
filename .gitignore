@@ -3,8 +3,10 @@ Dataset
 Annotate
 Log
 Outputs
+Old
 __pycache__
 *~
 *.png
 *.jpg
+*.txt
 log*
