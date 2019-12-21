@@ -16,7 +16,6 @@ def parse_opts():
     parser.add_argument(
         '--annotation_file', '-a',
         default='./Annotate/73',
-        #default='Annotation/seven80_6fps',
         type=str,
         help='Annotation file path')
     parser.add_argument(
