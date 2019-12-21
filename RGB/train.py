@@ -126,6 +126,7 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_
 
 
 def display(train_loader, namae):
+    ### Show sample images
     def imshow(inp, title=None):
         """Imshow for Tensor."""
         inp = inp.numpy().transpose((1, 2, 0))
@@ -138,14 +139,14 @@ def display(train_loader, namae):
         #     plt.title(title)
         # plt.pause(0.001)  # pause a bit so that plots are updated
         plt.imsave(namae+'.jpg', inp)
+        print(namae+'.jpg')
     # Get a batch of training data
     inputs, labels, filenames = next(iter(train_loader))
     # Make a grid from batch
     out = torchvision.utils.make_grid(inputs)
     #imshow(out)
 
-# display(train_loader, opt.annotation_file.split("/")[-1])
-display(train_loader, corename)
+#display(train_loader, corename)
 
 def nofk(output, gt_labels, threthold=0.5):
     return(np.where(output.cpu() < threthold, 0, 1))
@@ -202,6 +203,7 @@ def test(test_loader):
             sigmoided = F.sigmoid(outputs)
 
             predicted = nofk(sigmoided, labels, threthold=threthold)
+
             #true_positives.extend((labels * predicted).tolist())
             relevant += np.sum(labels, axis=0)
             selected += np.sum(predicted, axis=0)
