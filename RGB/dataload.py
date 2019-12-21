@@ -57,7 +57,7 @@ class RGBStream(torch.utils.data.Dataset):
         if self.transform:
             image = self.transform(image)
 
-        return image, np.array(label)
+        return image, np.array(label), filename
 
 
 

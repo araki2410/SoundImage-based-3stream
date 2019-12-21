@@ -17,6 +17,7 @@ import numpy as np
 import dataload
 #import networks
 from opts import parse_opts
+import time
 
 opt = parse_opts()
 
@@ -138,7 +139,7 @@ def display(train_loader, namae):
         # plt.pause(0.001)  # pause a bit so that plots are updated
         plt.imsave(namae+'.jpg', inp)
     # Get a batch of training data
-    inputs, labels = next(iter(train_loader))
+    inputs, labels, filenames = next(iter(train_loader))
     # Make a grid from batch
     out = torchvision.utils.make_grid(inputs)
     #imshow(out)
@@ -155,10 +156,7 @@ def train(train_loader, learning_rate):
     model.train()
     running_loss = 0
     
-
-    
-
-    for batch_idx, (images, labels) in enumerate(train_loader):
+    for batch_idx, (images, labels, filenames) in enumerate(train_loader):
         #images = images.transpose(1, 3) # (1,224,224,3) --> (1,3,224,224)
         images = images.to(device)
         labels = labels.to(device)
@@ -170,7 +168,7 @@ def train(train_loader, learning_rate):
         
         #loss = criterion(outputs, labels)
         loss = 1*F.multilabel_soft_margin_loss(outputs, labels.cuda(non_blocking=True).float())
-
+        
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
@@ -189,7 +187,7 @@ def test(test_loader):
     selected = [0]*classes_num # Count selected elements for calculate the Precision
     true_positive = [0]*classes_num  # Count true positive relevant for the Recall and Precision
     with torch.no_grad():
-        for batch_idx, (images, labels) in enumerate(test_loader):
+        for batch_idx, (images, labels, filenames) in enumerate(test_loader):
             #images = images.transpose(1, 3) # (1,224,224,3) --> (1,3,224,224)
             # images = Variable(images)
             images = images.to(device)
@@ -204,7 +202,6 @@ def test(test_loader):
             sigmoided = F.sigmoid(outputs)
 
             predicted = nofk(sigmoided, labels, threthold=threthold)
-            #print((labels * predicted).tolist())
             #true_positives.extend((labels * predicted).tolist())
             relevant += np.sum(labels, axis=0)
             selected += np.sum(predicted, axis=0)
@@ -238,6 +235,7 @@ else:
 
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_period, gamma=step_rate)
 
+start_time = time.time()
 for epoch in range(epochs):
     scheduler.step()
     loss = train(train_loader, learning_rate)
@@ -294,14 +292,15 @@ for epoch in range(epochs):
         oldloss = val_loss
 
     
+finish_time = time.time()
 print('Finished Training')
+print("Finish time: ", finish_time - start_time)
 plt.figure()
 x = []
 for i in range(0, len(loss_list)):
     x.append(i)
 
 print("save to "+corename+".png")
-
 ### Save a model.
 #torch.save(model.state_dict(), os.path.join(result_path+corename+'.ckpt'))
 #print("save to "+os.path.join(result_path+corename+'.ckpt'))
