@@ -11,7 +11,7 @@ class RGBStream(torch.utils.data.Dataset):
         ##
         ## For load 1/n frame
         ##
-        n = int(30/6)
+        n = int(30/fps)
         self.image_dataframe = []
         self.transform = transform
         
