@@ -27,8 +27,6 @@ def e_is(lr):
     return("{}e-{}".format(int(lr), i))
 
 
-
-
 class Train:
     def __init__(self, opt):
         model_name = opt.model
@@ -48,7 +46,7 @@ class Train:
         frame_rate=opt.fps
         gpu = opt.gpu
         ## Our video have variety. 森とかビルとか環境が多様なので
-        ## So, we need extract  beforehand, "learning part" and "evaluation part" from each video. 事前に学習用と評価用の画像を決定しておく
+        ## So, we need extract beforehand, "learning part" and "evaluation part" from each video. 事前に学習用と評価用の画像を決定しておく
         annotation_test = opt.annotation_file+"_test.txt"
         annotation_train = opt.annotation_file+"_train.txt"
         
@@ -84,26 +82,22 @@ class Train:
             ])
 
 
-#        texts = "\nepoch={}, batch_size={}, num_works={}, lr={}, threthold={}, optimizer={}, gpu={}\n"
-#        print("\nLog/"+self.corename)
-#        print(texts.format(epochs, batch_size, works, learning_rate, threthold, optim, gpu),  "Annotation file: ", opt.annotation_file, "\n")
-
-
-
         classes = {'bark':0,'cling':1,'command':2,'eat-drink':3,'look_at_handler':4,'run':5,'see_victim':6,'shake':7,'sniff':8,'stop':9,'walk-trot':10}
 
 ## Model
         self.classes_num = 11
 
-        if model_name == "resnet":
-            self.model = models.resnet18(pretrained=True)
-            self.model.fc = nn.Linear(512, self.classes_num)
-        elif model_name == "myrgb":
-            self.model = architecture.RGB_stream()
-        else:
-            self.model = models.vgg16(pretrained=True)
-            self.model.classifier[6] = nn.Linear(4096, self.classes_num)
+        # if model_name == "resnet":
+        #     self.model = models.resnet18(pretrained=True)
+        #     self.model.fc = nn.Linear(512, self.classes_num)
+        # elif model_name == "myrgb":
+        #     self.model = architecture.RGB_stream()
+        # else:
+        #     self.model = models.vgg16(pretrained=True)
+        #     self.model.classifier[6] = nn.Linear(4096, self.classes_num)
+        self.model = architecture.RNN()
         print(self.model)
+
 #exit()
 
 ## GPU
@@ -176,15 +170,17 @@ class Train:
         self.model.train()
         running_loss = 0
     
-        for batch_idx, (images, labels, filenames) in enumerate(train_loader):
+        for batch_idx, (imageX, imageY, imageZ, labels, filenames) in enumerate(train_loader):
             #images = images.transpose(1, 3) # (1,224,224,3) --> (1,3,224,224)
-            images = images.to(self.device)
+            imageX = imageX.to(self.device)
+            imageY = imageY.to(self.device)
+            imageZ = imageZ.to(self.device)
             labels = labels.to(self.device)
 
             # zero the parameter gradients
             self.optimizer.zero_grad()
             # forward + backward + optimize
-            outputs = self.model(images)
+            outputs = self.model(imageX, imageY, imageZ)
         
             #loss = criterion(outputs, labels)
             loss = 1*F.multilabel_soft_margin_loss(outputs, labels.cuda(non_blocking=True).float())
@@ -208,12 +204,15 @@ class Train:
         total_TP = [0]*self.classes_num  # Count true positive relevant for the Recall and Precision
         predict_data = []
         with torch.no_grad():
-            for batch_idx, (images, labels, filenames) in enumerate(test_loader):
+            for batch_idx, (imageX, imageY, imageZ, labels, filenames) in enumerate(test_loader):
                 #images = images.transpose(1, 3) # (1,224,224,3) --> (1,3,224,224)
                 # images = Variable(images)
-                images = images.to(self.device)
+                imageX = imageX.to(self.device)
+                imageY = imageY.to(self.device)
+                imageZ = imageZ.to(self.device)
                 labels = labels.to(self.device)
-                outputs = self.model(images)
+
+                outputs = self.model(imageZ, imageY, imageZ)
 
                 #loss = criterion(outputs, labels)
                 loss = 1*F.multilabel_soft_margin_loss(outputs, labels.cuda(non_blocking=True).float())

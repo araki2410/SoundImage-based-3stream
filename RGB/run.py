@@ -58,11 +58,6 @@ def run():
         print('true_positive: %s' % (list(true_positive)))
         print('grand_truth: %s' % (list(grand_truth)))
         print('selected: %s' % (list(selected)))
-#        print("\u001B[3A", end="") ## Over Write a line
-
-    ### Over Write the terminal
-        # print('EPOCH %d, LOSS: %.4f, Val_LOSS: %.4f, Micro_Precision: %.4f, Micro_Recall: %.4f, TP: %s, GT: %s, TP+FP: %s' % (epoch, loss, val_loss, micro_precision, micro_recall, list(true_positive), list(grand_truth), list(selected)))
-        # print("\u001B[2A", end="")
 
     ## logging
         loss_list.append(loss)
@@ -132,16 +127,8 @@ loss_list = run()
 finish_time = time.time()
 
 
-#for i in predict_datas:
-#    print(list(i))
-
 
 print('\n\n## Finished Training')
-
-#plt.figure()
-#x = []
-#for i in range(0, len(loss_list)):
-#    x.append(i)
 
 print("## Save to "+trainer.corename+".png")
 print("## Save to "+predict_data_filename)
@@ -150,6 +137,4 @@ print("## Save to "+predict_data_filename)
 #print("save to "+os.path.join(result_path+corename+'.ckpt'))
 
 #######
-
-
 print("## Finish time: ", finish_time - start_time)

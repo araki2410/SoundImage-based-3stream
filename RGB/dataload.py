@@ -27,6 +27,7 @@ class RGBStream(torch.utils.data.Dataset):
                 match = re.search(r'\d+ \d+_\d+.jpg .*', aline)
                 video = match.group(0).split(" ")[0] # 2017mmdd
                 frame = match.group(0).split(" ")[1] # 2017mmdd_0000.jpg
+                frame_num = frame.split("_")[1].split(".")[0]
                 ml_class =  match.group(0).split(" ")[2:] # walk-trot command cling ...
                 label = [0]*len(classes) #[0,0,0,0,0,0,0,0,0,0,0]
                 for aclass in ml_class:
@@ -36,7 +37,8 @@ class RGBStream(torch.utils.data.Dataset):
                         pass
                 ##
                 #print(os.path.join(data_dir, video, frame), label)
-                self.image_dataframe.append([os.path.join(data_dir, video, frame), label])
+                #self.image_dataframe.append([os.path.join(data_dir, video, frame, frame_num), label])
+                self.image_dataframe.append([data_dir, video, frame_num, label])
 
             
     def __len__(self):
@@ -44,20 +46,31 @@ class RGBStream(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         #dataframeから画像へのパスとラベルを読み出す
-        filename = self.image_dataframe[idx][0]
-        label = self.image_dataframe[idx][1]
-        img_path = os.path.join(filename)
+        data_dir = self.image_dataframe[idx][0]
+        video_name = self.image_dataframe[idx][1]
+        frame_num  = int(self.image_dataframe[idx][2])
+        label = self.image_dataframe[idx][3]
+
+        filename = os.path.join(data_dir,video_name, video_name +"_" + format(frame_num, '06d')+".jpg")
+
+        inter_dist = 15 # front 15 frame, back 15 frame
+        img_pathX = os.path.join(data_dir,video_name, video_name +"_" + format((frame_num-inter_dist), '06d')+".jpg")
+        img_pathY = os.path.join(data_dir,video_name, video_name +"_" + format(frame_num, '06d')+".jpg")
+        img_pathZ = os.path.join(data_dir,video_name, video_name +"_" + format((frame_num+inter_dist), '06d')+".jpg")
+
         # #画像の読み込み
-        #img_path = "data/UECFOOD100/1/11292.jpg"
-        #label = 1
-        image = Image.open(img_path)
+        imageX = Image.open(img_pathX)
+        imageY = Image.open(img_pathY)
+        imageZ = Image.open(img_pathZ)
         # #画像へ処理を加える
         #t = transforms.Resize((32, 32))
         #image = t(image)
         if self.transform:
-            image = self.transform(image)
+            imageX = self.transform(imageX)
+            imageY = self.transform(imageY)
+            imageZ = self.transform(imageZ)
 
-        return image, np.array(label), filename
+        return imageX, imageY, imageZ, np.array(label), filename
 
 
 

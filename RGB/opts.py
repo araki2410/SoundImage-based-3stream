@@ -19,9 +19,6 @@ def parse_opts():
         type=str,
         help='Annotation file path')
     parser.add_argument(
-        '--multi_gpu', 
-        help='If true use mulch GPU.') 
-    parser.add_argument(
         '--optimizer', '-o',
         default="adam",
         type=str,
@@ -80,6 +77,10 @@ def parse_opts():
         default=2,
         type=int,
         help='The first loss score. If test_loss less than oldloss, save model parameta.')
+    parser.add_argument(
+        '--multi_gpu', 
+        help='If true use mulch GPU.## This is an old option') 
+
     parser.add_argument('--start_time', type=str)
     start_time = time.localtime()
     parser.set_defaults(start_time="{year}{month:02}{day:02}-{hour:02}{minute:02}".format(year=start_time.tm_year,
