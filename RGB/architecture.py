@@ -23,7 +23,85 @@ class Net(nn.Module):
         x = F.log_softmax(self.fc3(x))
         return x
 
-    
+
+class RGB_stream(nn.Module):
+    ## resnet18
+    ## input (224 x 224 x 3)
+    def __init__(self):
+        super(RGB_stream, self).__init__()
+        self.features_1 = nn.Sequential(
+            nn.Conv2d(3, 64, 3, stride=1, padding=1),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(3, stride=2, padding=0),
+
+            nn.Conv2d(64, 64, 3, stride=1, padding=1),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, 3, stride=1, padding=1),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(64, 64, 3, stride=1, padding=1),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, 3, stride=1, padding=1),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+
+            nn.Conv2d(64, 128, 3, stride=2, padding=1),
+            nn.BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, 3, stride=1, padding=1),
+            nn.BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            # down
+            #nn.Conv2d(64, 128, 1, stride=2, padding=0),
+            nn.Conv2d(128, 128, 3, stride=2, padding=1),
+            nn.BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, 3, stride=1, padding=1),
+            nn.BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+
+            nn.Conv2d(128, 256, 3, stride=2, padding=1),
+            nn.BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, 3, stride=1, padding=1),
+            nn.BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            # down
+            #nn.Conv2d(128, 256, 1, stride=2, padding=0),
+            nn.Conv2d(256, 256, 3, stride=1, padding=1),
+            nn.BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, 3, stride=1, padding=1),
+            nn.BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+
+            nn.Conv2d(256, 512, 3, stride=2, padding=1),
+            nn.BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, 3, stride=1, padding=1),
+            nn.BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            # down
+            #nn.Conv2d(256, 512, 1, stride=2, padding=0),
+            nn.Conv2d(512, 512, 3, stride=1, padding=1),
+            nn.BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, 3, stride=1, padding=1),
+            nn.BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+
+        )
+
+        self.classifier = nn.Sequential(
+#            nn.AdaptiveAvgPool2d(output_size=(1,1)),
+            nn.Linear(7*7*512, 512),
+            nn.Linear(512, 11)
+        )            
+         
+    def forward(self, x):
+        x = self.features_1(x)
+        # x = self.features_2(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+
+
 class ArakiSoundNet(nn.Module):
     ##  input size (1 x 20 x 94)
     ##  48000Hz about 1sec wav file  || 44100Hz wav-file on mfcc -> (20 x 87 x 1)

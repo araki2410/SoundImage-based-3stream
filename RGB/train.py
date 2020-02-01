@@ -209,6 +209,7 @@ def test(test_loader):
             selected += np.sum(predicted, axis=0)
             true_positive += np.sum((labels * predicted), axis=0)
 
+            # print(list(zip(filenames, labels, predicted)))
     ##
     val_loss = running_loss / len(test_loader)
     

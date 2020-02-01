@@ -14,6 +14,7 @@ import torchvision.models as models
 import sys, os
 import numpy as np
 import dataload
+import architecture
 #from opts import parse_opts
 
 def e_is(lr):
@@ -97,6 +98,8 @@ class Train:
         if model_name == "resnet":
             self.model = models.resnet18(pretrained=True)
             self.model.fc = nn.Linear(512, self.classes_num)
+        elif model_name == "myrgb":
+            self.model = architecture.RGB_stream()
         else:
             self.model = models.vgg16(pretrained=True)
             self.model.classifier[6] = nn.Linear(4096, self.classes_num)
