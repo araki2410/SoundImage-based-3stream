@@ -192,7 +192,8 @@ class RNN(nn.Module):
             nn.MaxPool2d(2, padding=0))
         
         self.classifier = nn.Sequential(
-            nn.Linear(7*7*512*3, 4096),
+            #nn.Linear(7*7*512*3, 4096),
+            nn.Linear(7*7*512, 4096),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(4096, 4096),
@@ -207,7 +208,8 @@ class RNN(nn.Module):
         x = x.view(x.size(0), -1)
         y = y.view(y.size(0), -1)
         z = z.view(y.size(0), -1)
-        xyz = torch.cat((x, y, z), 1)
+        #xyz = torch.cat((x, y, z), 1)
+        xyz = (x+y+z/3)
         xyz = self.classifier(xyz)
 
         return xyz
