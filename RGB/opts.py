@@ -7,27 +7,38 @@ def parse_opts():
         '--model', '-m',
         default='resnet',
         type=str,
-        help='[ vgg16 | resnet ]')
+        help='[ resnet | vgg ] #die now')
     parser.add_argument(
         '--fps', '-f',
         default=6,
         type=int,
-        help='1 to 30')
+        help='1 to 30. default=6')
     parser.add_argument(
         '--annotation_file', '-a',
         default='./Annotate/73',
         type=str,
-        help='Annotation file path')
+        help='Annotation file path. default=./Annotate/73')
+    parser.add_argument(
+        '--epochs', '-e',
+        default=50,
+        type=int,
+        help='Epoch size. default=50')
+    parser.add_argument(
+        '--batch_size', '-b', default=32, type=int, help='Batch Size. default=32')
+    parser.add_argument(
+        '--num_works', '-n', default=8, type=int, help='Number of works. default=8')
+    parser.add_argument(
+        '--threthold', default=0.5, type=float, help='threthold for N-ok-K. default=0.5')
     parser.add_argument(
         '--optimizer', '-o',
         default="adam",
         type=str,
-        help='[ adam | sgd ]')
+        help='[ adam | sgd ] default=adam')
     parser.add_argument(
         '--lr',
         default=0.000001,
         type=float,
-        help='Initial learning rate (divided by 10 while training by lr scheduler)')
+        help='Initial learning rate (divided by 10 while training by lr scheduler). default=0.000001')
     parser.add_argument(
         '--step_rate',
         default=1.0,
@@ -37,24 +48,13 @@ def parse_opts():
         '--step_period',
         default=1000,
         type=int,
-        help='piriod of down learning_rate. default=100')
+        help='piriod of down learning_rate. default=1000')
     parser.add_argument(
         '--gpu', '-g', default=0, type=int,
         help='0..9: single gpu | -1: multi_gpu')
     parser.add_argument(
-        '--epochs', '-e',
-        default=50,
-        type=int,
-        help='Number of total epochs to run')
-    parser.add_argument(
-        '--batch_size', '-b', default=32, type=int, help='Batch Size')
-    parser.add_argument(
-        '--num_works', '-n', default=8, type=int, help='Number of works')
-    parser.add_argument(
-        '--threthold', default=0.5, type=float, help='threthold for N-ok-K')
-    parser.add_argument(
         '--stream',
-        default="rgb",
+        default="rgb_myrnn",
         type=str,
         help='Core name to save for: image, logs and other outputs')
     parser.add_argument(

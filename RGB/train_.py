@@ -87,6 +87,8 @@ class Train:
 ## Model
         self.classes_num = 11
 
+        model_dir = "../Models"
+        pretrained_model = "resnet18.pth"
         # if model_name == "resnet":
         #     self.model = models.resnet18(pretrained=True)
         #     self.model.fc = nn.Linear(512, self.classes_num)
@@ -95,7 +97,13 @@ class Train:
         # else:
         #     self.model = models.vgg16(pretrained=True)
         #     self.model.classifier[6] = nn.Linear(4096, self.classes_num)
-        self.model = architecture.RNN()
+        
+        self.model = architecture.RNN(architecture.BasicBlock, [2,2,2,2])
+#        state_dict = load_state_dict_from_url("https://download.pytorch.org/models/resnet18-5c106cde.pth", progress=progress)
+#        model.load_state_dict(state_dict)
+        self.model.load_state_dict(torch.load(os.path.join(model_dir, pretrained_model)))
+        self.model.fc = nn.Linear(512, self.classes_num)
+
         print(self.model)
 
 #exit()
